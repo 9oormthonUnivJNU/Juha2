@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>list</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>title</th>
+            <th>writer</th>
+            <th>date</th>
+            <th>hits</th>
+        </tr>
+        <!--    BoardController.findAll()에서 model.addAttribute()에 "boardList"로 넘겨진 boardDTOList를 출력    -->
+        <tr th:each="board : ${boardList}">  <!-- th:each은 foreach와 같은 thymeleaf 문법 -->
+            <td th:text="${board.id}"></td>
+            <!--      Controller에서 가져온 값들을 URI에 표현하고 싶으면 | | 을 넣어야 함(thymeleaf 문법)      -->
+            <td><a th:href="@{|/board/${board.id}|}" th:text="${board.boardTitle}"></a></td>
+            <td th:text="${board.boardWriter}"></td>
+            <td th:text="*{#temporals.format(board.boardCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${board.boardHits}"></td>
+        </tr>
+    </table>
+</body>
+</html>

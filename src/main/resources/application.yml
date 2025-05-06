@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: Board-Dev
+
+
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/univ?serverTimezone=Asia/Seoul&useSSL=false
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # (create(실행 시 생성[초기 설정]), update(실행 시 업데이트[생성 후 설정]), validate, none 중 선택 가능)
+    show-sql: true      # JPA가 실행하는 SQL 쿼리를 콘솔에 출력할지 여부
+    properties:
+      hibernate:
+        format_sql: true  # SQL 예쁘게 출력
+    database-platform: org.hibernate.dialect.MySQL8Dialect  # MySQL8 버전 기준
+
+  thymeleaf:
+    cache: false         # 개발 중에는 캐시 끄는 게 편함 (수정할 때 바로 반영)
+
+# (필요하면 추가)
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace   # 파라미터 값까지 로그로 보고 싶으면
