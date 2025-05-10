@@ -10,9 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
-@RestController
+@Controller
 // Lombok 애노테이션 (@NoArgsConstructor[기본 생성자 생성, (force = true)옵션 넣으면 final 변수를 0,false,null 로 초기화]/@RequiredArgsConstructor[선언만 되어있는 final 필드나 @NotNull 필드에 대한 초기화 생성자 생성]/@AllArgsConstructor[모든 필드에 대한 초기화 생성자 생성])
 @RequiredArgsConstructor
 @RequestMapping("/board")  // /board 에 대한 주소를 먼저 받고 후에 path parameter(/save 등등) 주소 처리
@@ -26,7 +27,7 @@ public class BoardController {
 
     // 스프링이 파라미터로 받은 BoardDTO의 필드와 save.html의 input 항목의 동일한 name을 알아서 매핑함
     @PostMapping("/save") // save write
-    public String save(@ModelAttribute BoardDTO boardDTO) {
+    public String save(@ModelAttribute BoardDTO boardDTO) throws IOException {
         System.out.println("boardDTO: " + boardDTO);
         boardService.save(boardDTO);
 
@@ -88,9 +89,9 @@ public class BoardController {
     @GetMapping("/paging")
     public String paging(@PageableDefault(page = 1) Pageable pageable, Model model) {
         /*
-        Pageable은 qeury param으로 들어온 page 값을 받아주는 객체
-        page= 값이 없을 경우 (애노테이션으로 기본 page=1을 미리 설정)
-        paging 처리된 데이터를 가지고 화면으로 넘어가야 되므로 Model 객체 사용
+            Pageable은 qeury param으로 들어온 page 값을 받아주는 객체
+            page= 값이 없을 경우 (애노테이션으로 기본 page=1을 미리 설정)
+            paging 처리된 데이터를 가지고 화면으로 넘어가야 되므로 Model 객체 사용
         */
         // pageable.getPageNumber();
 

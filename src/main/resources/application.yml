@@ -15,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # (create(실행 시 생성[초기 설정]), update(실행 시 업데이트[생성 후 설정]), validate, none 중 선택 가능)
+      ddl-auto: update  # (create(실행 시 생성[초기 설정]), update(실행 시 업데이트[생성 후 설정]), validate(매핑 검증), none 중 선택 가능)
     show-sql: true      # JPA가 실행하는 SQL 쿼리를 콘솔에 출력할지 여부
     properties:
       hibernate:
