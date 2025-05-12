@@ -6,6 +6,8 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>detail</title>
+    <!-- Jquery CDN 주소 (3.7.1 버전)-->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 </head>
 <body>
 <table>
@@ -43,9 +45,48 @@
     <button onclick="listReq()">목록</button>
     <button onclick="updateReq()">수정</button>
     <button onclick="deleteReq()">삭제</button>
+
+    <!-- 댓글 작성 부분 -->
+    <div id="comment-write">
+        <input type="text" id="commentWriter" placeholder="작성자">
+        <input type="text" id="commentContents" placeholder="내용">
+        <button id="comment-write-btn" onclick="commentWrite()">댓글 작성</button>
+    </div>
+    <!-- 댓글 출력 부분 -->
+    <div id="comment-list">
+
+    </div>
+
 </body>
 
 <script th:inline="javascript">
+    const commentWrite = () => {
+        const writer = document.getElementById("commentWriter").value;  // input 태그 속성의 value
+        const contents = document.getElementById("commentContents").value;  // input 태그 속성의 value
+        console.log("작성자: ", writer);
+        console.log("내용: ", contents);
+        const id = [[${board.id}]]; // 게시글 번호(board_id)
+        /* 작성된 값을 controller 로 보내기 */
+        $.ajax({
+            // 요청 방식: post, 요청 주소: /comment/save, 요청 데이터: 작성자, 작성 내용, 게시글 번호:(board_id)
+            // 파일 첨부처럼 댓글도 어떤 게시글에 작성된 댓글인지 매핑 시키는 것이 중요
+            type: "post",
+            url: "/comment/save",
+            data: {
+                "commentWriter": writer,
+                "commentContents": contents,
+                "boardId": id
+            },
+            success: function(res) {
+                console.log("요청 성공, ", res);
+            },
+            error: function(error) {
+                console.log("요청 실패, ", error);
+            }
+        });
+    }
+
+
    const listReq = () => {
        console.log("목록 요청");
        const page = [[${page}]];
