@@ -25,7 +25,7 @@ public class CommentController {
         System.out.println("commentDTO: " + commentDTO);
         // 출력: commentDTO: CommentDTO(id=null, commentWriter=댓글작성자1, commentContents=댓글내용1, boardId=1, commentCreatedTime=null)
         Long saveResult = commentService.save(commentDTO);
-        if (saveResult != null) {  // 작성 성
+        if (saveResult != null) {  // 작성 성공
             /*
                 작성 성공하면 save는 끝나면 안된다.
                 작성하면 기존 작성 댓글 목록에 새 댓글이 추가되어 출력되어야 하기 때문
