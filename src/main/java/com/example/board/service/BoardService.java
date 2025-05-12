@@ -52,20 +52,23 @@ public class BoardService {  // 비즈니스 로직, 트랜잭션 관리
                 7. board_file_table에 해당 데이터 save 처리
                     - boarf_file_table의 entity 정의
             */
-            MultipartFile boardFile = boardDTO.getBoardFile(); // 1.
-            String originalFilename = boardFile.getOriginalFilename();  // 2.
-            String storedFileName = System.currentTimeMillis() + "_" + originalFilename;  // 1970.01.01 기준으로 현재 몇 ms가 지났는지 값을 파일 이름에 붙임 / 3.
-            String savePath = "/Users/songjuha/study/Univ/board/springboot_img/" + storedFileName;  // 해당 경로에 설정한 파일 이름으로 저장 / 4.
-            boardFile.transferTo(new File(savePath));  // 만든 경로로 java.io의 File 객체를 생성하고 객체 설정대로 파일을 전송하는 메서드, 파일 넘길 때 예외 발생 가능 (IOException 처리) / 5.
-
+        // 부모 데이터(board_table)이 먼저 저장되어야 함
             // DTO -> Entity 변환후 board_table, board_file_table에 저장하는 과정
             BoardEntity boardEntity = BoardEntity.toSaveFileEntity(boardDTO);
             Long savedId = boardRepository.save(boardEntity).getId();  // boardEntity 정보를 저장하고 생성된 id 값(PK) 가져오기
             // 저장한 board의 PK로 해당 board 레코드 데이터 가져오기
             BoardEntity board = boardRepository.findById(savedId).get();
 
-            BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(board, originalFilename, storedFileName);
-            boardFileRepository.save(boardFileEntity);
+            for (MultipartFile boardFile : boardDTO.getBoardFile()) {  // 반복문을 이용해서 1번 동작
+                // MultipartFile boardFile = boardDTO.getBoardFile(); // 1.
+                String originalFilename = boardFile.getOriginalFilename();  // 2.
+                String storedFileName = System.currentTimeMillis() + "_" + originalFilename;  // 1970.01.01 기준으로 현재 몇 ms가 지났는지 값을 파일 이름에 붙임 / 3.
+                String savePath = "/Users/songjuha/study/Univ/board/springboot_img/" + storedFileName;  // 해당 경로에 설정한 파일 이름으로 저장 / 4.
+                boardFile.transferTo(new File(savePath));  // 만든 경로로 java.io의 File 객체를 생성하고 객체 설정대로 파일을 전송하는 메서드, 파일 넘길 때 예외 발생 가능 (IOException 처리) / 5.
+
+                BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(board, originalFilename, storedFileName);
+                boardFileRepository.save(boardFileEntity);
+            }
         }
     }
 

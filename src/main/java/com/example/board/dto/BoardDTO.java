@@ -1,10 +1,12 @@
 package com.example.board.dto;
 
 import com.example.board.entity.BoardEntity;
+import com.example.board.entity.BoardFileEntity;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // lombok
@@ -25,10 +27,10 @@ public class BoardDTO {
     private LocalDateTime boardUpdateTime; // 글 수정 시간
 
     // save.html -> Controller 파일 담는 용도
-    private MultipartFile boardFile; // 실제 파일을 받을 수 있는 인터페이스 타입
+    private List<MultipartFile> boardFile; // 실제 파일을 받을 수 있는 인터페이스 타입
     // Service (비즈니스 로직) 에서 설정해줄 부분들
-    private String originalFileName; // 원본 파일 이름
-    private String storedFileName;   // 서버 저장용 파일 이름 (혹시 모를 파일 이름 중복 예방 및 관리)
+    private List<String> originalFileName; // 원본 파일 이름 -> 다중일 경우 DB에서 가져가야 할 파일이 여러개므로 List
+    private List<String> storedFileName;   // 서버 저장용 파일 이름 (혹시 모를 파일 이름 중복 예방 및 관리) -> 다중일 경우 DB에서 가져가야 할 파일이 여러개므로 List
     private int fileAttached; // 파일 첨부 여부 (첨부 1, 미첨부 0) 플래그 값 (boolean 타입으로 하면 entity 에서 좀 복잡해져서 int 사용)
 
     // paging에 필요한 BoardDTO 객체 초기화
@@ -56,6 +58,10 @@ public class BoardDTO {
         if (boardFileAttached == 0) {
             boardDTO.setFileAttached(boardFileAttached); // 0
         } else {
+            // 중간 전달 역할 리스트 객체 (Entity에서 여러개의 FileName을 받을 리스트 객체)
+            List<String> originalFileNameList = new ArrayList<>();
+            List<String> storedFileNameList = new ArrayList<>();
+
             boardDTO.setFileAttached(boardFileAttached); // 1
             /*
               파일 이름 가져가기 Entity -> DTO
@@ -63,10 +69,16 @@ public class BoardDTO {
               하지만 BoardEntity(board_table) 와 BoardFileEntity(board_file_table) 간 연관 관계를 맺어 놓았기 때문에
               서로 다른 테이블에 있는 값들을 가져올 때는 JOIN 을 사용하면 쉬움
               select * from board_table b join board_file_table bf on b.id = bf.board_id where b.id = ?;
-            */
             // BoardEntity에서 file table에 참조 관계를 맺기 위해 JPA 문법에 맞게 BoardFileEntityList를 정의해 놓았기 때문에 해당 getter를 사용할 수 있음 (부모 -> 자식 객체 직접 접근)
             boardDTO.setOriginalFileName(boardEntity.getBoardFileEntityList().get(0).getOriginalFileName());  // 0번 인덱스의 BoardFileEntity 객체의 originalFileName
             boardDTO.setStoredFileName(boardEntity.getBoardFileEntityList().get(0).getStoredFileName());  // 실제로는 storedFileName만 사용되는 경우가 많음
+            */
+            for (BoardFileEntity boardFileEntity : boardEntity.getBoardFileEntityList()) {
+                originalFileNameList.add(boardFileEntity.getOriginalFileName());
+                storedFileNameList.add(boardFileEntity.getStoredFileName());
+            }
+            boardDTO.setOriginalFileName(originalFileNameList);
+            boardDTO.setStoredFileName(storedFileNameList);
 
             /*
                 중요!
