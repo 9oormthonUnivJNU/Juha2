@@ -42,6 +42,10 @@ public class BoardEntity extends BaseEntity {  // BaseEntity를 상속하여 Boa
     private List<BoardFileEntity> boardFileEntityList = new ArrayList<>();  // board 하나에 file을 list로 가질 수 있도록 참조 관계 설정
     // 실제 DB에 List 타입 컬럼이 정의되는 것은 아님
 
+    // BoardEntity와 CommentEntity 참조 관계 설정
+    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CommentEntity> commentEntityList = new ArrayList<>();
+
 
     // DTO에 담긴 값들을 Entity 객체로 옮겨 닮는 작업 (DTO -> Entity)
     public static BoardEntity toSaveEntity(BoardDTO boardDTO) {
