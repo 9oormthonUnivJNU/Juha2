@@ -1,7 +1,9 @@
 package com.example.board.controller;
 
 import com.example.board.dto.BoardDTO;
+import com.example.board.dto.CommentDTO;
 import com.example.board.service.BoardService;
+import com.example.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequestMapping("/board")  // /board 에 대한 주소를 먼저 받고 후에 path parameter(/save 등등) 주소 처리
 public class BoardController {
     private final BoardService boardService;  // @RequiredArgsConstructor에 의해 생성자 의존성 주입됨
+    private final CommentService commentService;  // 댓글을 가져오기 위해 CommentService 주입
 
     @GetMapping("/save") // save read
     public String save() {
@@ -52,6 +55,10 @@ public class BoardController {
         * */
         boardService.updateHits(id);
         BoardDTO boardDTO = boardService.findById(id);
+        /* 댓글 목록 가져오기 */
+        List<CommentDTO> commentDTOList = commentService.findAll(id);
+
+        model.addAttribute("commentList", commentDTOList);
         model.addAttribute("board", boardDTO);
         // 게시글 상세 페이지(detail)에서 경로에 몇 페이지의 게시물인지 포함 (리펙터링)
         model.addAttribute("page", pageable.getPageNumber());

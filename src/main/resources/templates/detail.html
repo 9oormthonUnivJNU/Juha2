@@ -52,14 +52,28 @@
         <input type="text" id="commentContents" placeholder="내용">
         <button id="comment-write-btn" onclick="commentWrite()">댓글 작성</button>
     </div>
-    <!-- 댓글 출력 부분 -->
+    <!-- 댓글 출력 부분 (페이지 입장 시 최초 출력)-->
     <div id="comment-list">
-
+        <table>
+            <tr>
+                <th>댓글번호</th>
+                <th>작성자</th>
+                <th>내용</th>
+                <th>작성 시</th>
+            </tr>
+            <tr th:each="comment : ${commentList}">
+                <td th:text="${comment.id}"></td>
+                <td th:text="${comment.commentWriter}"></td>
+                <td th:text="${comment.commentContents}"></td>
+                <td th:text="${comment.commentCreatedTime}"></td>
+            </tr>
+        </table>
     </div>
 
 </body>
 
 <script th:inline="javascript">
+    // 댓글 저장 시 테이블 갱신
     const commentWrite = () => {
         const writer = document.getElementById("commentWriter").value;  // input 태그 속성의 value
         const contents = document.getElementById("commentContents").value;  // input 태그 속성의 value
